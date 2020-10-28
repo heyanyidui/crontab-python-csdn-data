@@ -1,0 +1,2 @@
+
+0 12,23 * * * /home/yan/anaconda3/bin/python3 /home/yan/py_blog/myblog.py >> /home/yan/py_blog/myblog.log 
