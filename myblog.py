@@ -9,39 +9,27 @@ import time
 
 # 博客地址
 url = 'https://blog.csdn.net/smileyan9'
-
 html = urlopen(url)
-soup = BeautifulSoup(html.read(),features='lxml')
+soup = BeautifulSoup(html.read())
 
+# 进一步缩小范围
 sources = soup.select('.data-info')
+soup = BeautifulSoup(str(sources))
 
-soup = BeautifulSoup(str(sources),features='lxml')
+dls = soup.find_all(['dl']) 
+notes = ['原创','周排名','总排名','访问','等级','积分','粉丝','获赞','评论','收藏']
 
-# soup
-results = soup.find_all(['span'])
+common = ''
 
-# 总排名
-place = results[2].get_text()
+# 选择自己关注的数据以及顺序
+keys = [6,3,5,8,7,9]
 
-# 总积分
-# score = results[4].get_text()      # 如果积分不超过1万可以这么使用
-score = soup.find_all(['dl'])[5]['title']
-
-# 总粉丝
-fans = results[5].get_text()
-
-# 总访客
-text = soup.find_all(style='min-width:58px')[0]
-visitors = text['title']
+for key in keys:
+    common += (notes[key]+':'+dls[key]['title']+" ")
 
 date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-print(date)
-print('排名：',place)
-print('积分：',score)
-print('粉丝：',fans)
-print('访客：',visitors)
 
-common = '排名：{}; 积分：{}; 粉丝：{}; 访客：{}'.format(place, score, fans, visitors)
+print(date,'->',common)
 
 # 第三方 SMTP 服务
 mail_host = 'smtp.exmail.qq.com'  #设置服务器
@@ -66,4 +54,3 @@ try:
     print("邮件发送成功")
 except smtplib.SMTPException:
     print("Error: 无法发送邮件")
-
